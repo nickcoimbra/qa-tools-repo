@@ -1,0 +1,33 @@
+config:
+  target: "https://localhost:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      rampTo: 50
+
+#    - duration: 120
+#      arrivalRate: 10
+#      
+#    - duration: 1200
+#      arrivalRate: 20
+scenarios:
+  - flow:
+    - get:
+        url: "/teste/de/exemplo/231231-51464-faef1451"
+#  - flow:
+#    - post:
+#        url: "/credit-service/v1/operations"
+#        json:
+#            operationType: "DEBIT"
+#            externalReference: "89f9b2c2-9669-4e45-bf36-ebeb0ddfe885"
+#            data: 
+#              account:
+#                merchantId: "5028"
+#                partnerUuid: "92b79bf4-9463-41e6-b7bd-efae4c1346ed"
+#                productUuid: "4d07196d-e5c7-45c3-a736-d393c93f1c6a"
+#              amount: 1
+#              type: "DEBIT"
+#
+# install node and artillery using "$ npm install -g artillery" 
+# in file project just "$ artillery run stress_artillery_test.yaml"
+# 
