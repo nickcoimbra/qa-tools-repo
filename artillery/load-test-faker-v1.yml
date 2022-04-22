@@ -1,0 +1,84 @@
+config:
+  plugins:
+    faker:
+      locale: en
+  variables:
+    uuidPrincipal: '$faker.datatype.uuid'
+    uuidFirstPayable: '$faker.datatype.uuid'
+    uuidSecondPayable: '$faker.datatype.uuid'
+    partnerTransactionId: '$faker.finance.pin'
+  target: 'https://localhost/test'
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: Warm up
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 50
+      name: Ramp up load
+    - duration: 100
+      arrivalRate: 50
+      name: Sustained load
+scenarios:
+  - flow:
+      - post:
+          url: '/adapter-test/v2/transaction'
+          headers:
+            Authorization: 'Bearer token'
+            Content-Type: application/json
+          json:
+            GUID: '{{ uuidPrincipal }}'
+            postbackUrl: 'https://webhook.site/e3390b12-05d1-4ef1-8711-fef77a'
+            transactionInfo:
+              partnerStoreId: '1'
+              partnerTransactionId: '{{ partnerTransactionId }}'
+              partnerTransactionDate: '2022-02-20 10:10:10'
+              grossAmount: 12000
+              description: 'asdasd'
+              authorizationCode: '839b3efa-5484-4986-916f-2efc3b981ed6'
+              nsuCode: '969'
+              merchantInfo:
+                merchantId: '6eb785e7-07b6-4425-aea0-477212f579d5'
+                documentNumber: '65609768000102'
+                documentType: 'CNPJ'
+            receivables:
+              - description: 'From PagSeguro'
+                acquirerId: '115'
+                acquirerTransactionId: '982374823'
+                installmentType: '1'
+                paymentMethod: 'CARTEIRA_DIGITAL'
+                installments:
+                  - grossAmount: '12000'
+                    mdrAmount: '6000'
+                    netAmount: '14000'
+                    previsionDate: '2022-03-29'
+                bankAccountInfo:
+                  bankNumber: '1'
+                  branchNumber: '1'
+                  branchDigit: '1'
+                  accountNumber: '1'
+                  accountDigit: '1'
+            payables:
+              - GUID: '{{ uuidFirstPayable }}'
+                description: 'To Store'
+                originAccountId: '108721'
+                destinationAccountId: '108851'
+                installments:
+                  - installmentNumber: 1
+                    settlementDate: '2022-03-29'
+                    baseAmount: 9519
+                    mdrAmount: 1903
+                    netAmount: 7622
+                    payableAmount: 5
+              - GUID: '{{ uuidSecondPayable }}'
+                description: 'To Payly'
+                originAccountId: '108721'
+                destinationAccountId: '467'
+                installments:
+                  - installmentNumber: 1
+                    settlementDate: '2022-03-29'
+                    baseAmount: 9519
+                    mdrAmount: 1903
+                    netAmount: 7622
+                    payableAmount: 5
+      - log: 'Agendamento feito uuid principal: {{ uuidPrincipal }} partnerId: {{ partnerTransactionId }}'
